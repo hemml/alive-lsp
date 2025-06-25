@@ -173,9 +173,9 @@
               (setf (socket server) nil))))
 
 
-(defun listen-for-conns (server log port)
-    (let ((socket (usocket:socket-listen "127.0.0.1" port :reuse-address T)))
-        (format T "[~A][STARTING] Started on port ~A~%" (alive/utils:get-timestamp) (usocket:get-local-port socket))
+(defun listen-for-conns (server log port &key (interface "127.0.0.1"))
+    (let ((socket (usocket:socket-listen interface port :reuse-address T)))
+        (format T "[~A][STARTING] Started on ~A:~A~%" (alive/utils:get-timestamp)  (usocket:host-to-hostname (usocket:get-local-address socket)) (usocket:get-local-port socket))
 
         (unwind-protect
                 (progn (setf (socket server) socket)
@@ -186,11 +186,11 @@
             (stop-server server))))
 
 
-(defun start-server (server log port)
+(defun start-server (server log port &key (interface "127.0.0.1"))
     (let ((stdout *standard-output*))
         (bt:make-thread (lambda ()
                             (let ((*standard-output* stdout))
-                                (listen-for-conns server log port)))
+                                (listen-for-conns server log port :interface interface)))
                         :name "Alive LSP Server")))
 
 

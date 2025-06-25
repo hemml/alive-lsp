@@ -200,7 +200,7 @@
     (stop-server server))
 
 
-(defun start (&key (port *default-port*))
+(defun start (&key (port *default-port*) (interface "127.0.0.1"))
     (let ((log (logger:create *standard-output* logger:*info*))
           (server (make-instance 'lsp-server)))
-        (start-server server log port)))
+        (start-server server log port :interface interface)))
